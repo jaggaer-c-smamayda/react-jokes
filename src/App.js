@@ -3,19 +3,21 @@ import 'bootstrap/dist/css/bootstrap.css';
 import Col from 'react-bootstrap/Col';
 import Row from 'react-bootstrap/Row';
 import Container from 'react-bootstrap/Container';
-
+import Navbar from 'react-bootstrap/Navbar';
+import Nav from 'react-bootstrap/Nav';
+import Button from "react-bootstrap/Button";
 // ========= NOTES========
 
    //In class-based components the perfect place for data 
     //fetching is componentDidMount() lifecycle method.
             
     //In functional components it is useEffect() hook with an 
-    //empty dependancy array because we need the data to be fetched once.
+    //empty dependency array because we need the data to be fetched once.
 
 
     //We can fetch data on triggering an event (for example button click)
 
-    //ways of fetching data #1 using fetch API #2BY custom method #3By GrapthQL #4 By Rect Query Libr.
+    //ways of fetching data #1 using fetch API #2BY custom method #3By GraphQL #4 By Rect Query Library.
 class App extends React.Component {
    
         // Constructor 
@@ -24,27 +26,30 @@ class App extends React.Component {
              this.state = {
                error: null,
                isLoading: false,
-                joke: []
+                jokes: []
             };
         }
         // ComponentDidMount is used to
           // execute the code 
-          componentDidMount() {
-            fetch ( 'https://api.icndb.com/jokes/random' )
-          // Grabbing the information from the JSON file.
+    componentDidMount() {
+        fetch ( 'https://api.icndb.com/jokes/random/4' )
+            // Grabbing the information from the JSON file.
             .then( res => res.json() )
-          // Fetching the joke from value in JSON.
-             .then( json => {
-               if( json.type==='success' ){
-                 json.value.forEach( ( obj, i )=>{
-                 this.setState({
-                   isLoaded:true,
-                   joke: obj.value.joke});
-             }
+            // Fetching the joke from value in JSON.
+            //.then((data) => setJoke(data.joke));
+            .then( json => {
+                if( json.type==='success' ){
+                    //console.log(json);
+                    json.value.forEach( ( obj)=>{
+                        this.setState(prevState => ( {
+                            isLoading:true,
+                            jokes: [...prevState.jokes, obj.joke]}));
+                    } )
+
              // Note: it's important to handle errors here
               // instead of a catch() block so that we don't swallow
               // exceptions from actual bugs in components.
-              )
+              
             }
            })       
       }
@@ -56,13 +61,22 @@ class App extends React.Component {
       } 
     
       render() {
-        const {joke} = this.state;
+        const {jokes,handleClick} = this.state;
         return (
        
             <Container
                 style={{position: 'relative', width: 'Auto'
                 }}>
-            <Row>
+                <Navbar bg="light" variant="light">
+                    <Navbar.Brand href="#home">Jokes</Navbar.Brand>
+                    <Nav className="me-auto">
+                        <Nav.Link href="#home">Home</Nav.Link>
+                        <Nav.Link href="#joke">Joke</Nav.Link>
+                        <Nav.Link href="#movies">Movies</Nav.Link>
+                    </Nav>
+                </Navbar>
+
+                <Row>
                 <Col style={{
                     backgroundColor: 'red',
                     height:350,
@@ -70,19 +84,22 @@ class App extends React.Component {
                 }}>
                     <input style={{
                         textAlign: 'center',
-                        }}id="inputId" type="number" name="numberInput"  max="20" min="1" step="1"/>
-                    
-                    <button style={{
-                        
-                        
-                        }}type="button" id="jokeBtn">Click Me for more jokes</button>
+                        }} id="inputId" type="number" name="numberInput"  max="20" min="1" step="1"/>
+
+
+                    <Button style={{
+                        alignItems: 'center',
+                        marginTop:70,
+                        marginLeft:220,
+                        textAlign: 'center',
+                    }} onClick={handleClick} > Click me for more jokes</Button>
                     
                         <p style={{
                         alignItems: 'center',
                         marginTop:90,
                         textAlign: 'center',
                         }}
-                         id={joke}>let do it all </p>
+                         id='j1'>{jokes[0]}</p>
                         
                 </Col>
                 <Col style={{
@@ -93,7 +110,7 @@ class App extends React.Component {
                         marginTop:170,
                         alignItems: 'center',
                         textAlign: 'center',
-                        }}id='j2'>let do it all </p>
+                        }} id='j2'> {jokes[1]}</p>
 
                 </Col>
           < div className='w-100'/>
@@ -106,7 +123,7 @@ class App extends React.Component {
                         alignItems: 'center',
                         marginTop:170,
                         textAlign: 'center',  
-                    }}id='j3'>let do it all </p>
+                    }} id='j3'> {jokes[2]}</p>
 
                 </Col>
                 <Col style={{
@@ -117,7 +134,7 @@ class App extends React.Component {
                         alignItems: 'center',
                         marginTop:170,
                         textAlign: 'center',
-                        }}id='j4'>let do it all </p>
+                        }} id='j4'>{jokes[3]} </p>
                 </Col>
             </Row>
           </Container>
